@@ -7,6 +7,7 @@ from PyInstaller.utils.hooks import collect_all
 
 def analysis_arguments(project: Path) -> dict:
     datas = [
+        (str(project / "LICENSE"), "."),
         (str(project / "assets/app-icon.ico"), "assets"),
         (str(project / "assets/app-icon.png"), "assets"),
         (str(project / "vendor/heif"), "vendor/heif"),

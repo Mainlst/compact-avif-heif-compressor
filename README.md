@@ -79,3 +79,9 @@ python3 -m unittest discover -s tests -v
 ```
 
 Linux の画面がない環境では `xvfb-run -a python3 -m unittest discover -s tests -v` を使用できます。画面が利用できない場合、UI のテストはスキップします。
+
+## ライセンス
+
+本プロジェクト独自のソースコード・ドキュメント・画像は [MIT License](LICENSE) で公開しています。著作権表記は `Copyright (c) 2026 Mainlst` です。
+
+同梱する外部ツール・ライブラリー・上流資料と Python の依存ライブラリーには、それぞれのライセンスが適用されます。詳細は [同梱ツールと出典](vendor/README.md)を参照してください。Windows 配布物に含める HEIF ライブラリーには GPL/LGPL の条件も適用されます。対応するライセンス本文とソースに関する情報は [vendor/heif/NOTICE.txt](vendor/heif/NOTICE.txt)に記載しています。
