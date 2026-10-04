@@ -1,0 +1,14 @@
+* text=auto
+*.py text eol=lf
+*.spec text eol=lf
+*.md text eol=lf
+*.sh text eol=lf
+*.bat text eol=crlf
+*.png binary
+*.ico binary
+*.exe binary
+*.dll binary
+*.tar.gz binary
+
+# Preserve upstream bytes and the checksums recorded in the vendor manifests.
+vendor/** -text

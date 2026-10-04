@@ -1,0 +1,136 @@
+{
+  "distribution": "Image Compressor minimal Windows x64 shared FFmpeg",
+  "version": "9.0.2",
+  "license": "LGPL-2.1-or-later",
+  "ffmpeg_commit": "46d8f462eeb87ee1f704d8c44a0ee24fca471ad1",
+  "source_url": "https://github.com/FFmpeg/FFmpeg/archive/46d8f462eeb87ee1f704d8c44a0ee24fca471ad1.tar.gz",
+  "source_archive_sha256": "56999ad7cdcfbe520e989e38ac763341fab71b367ef8c20434117f8d1b7204a9",
+  "build_recipe": "rebuild-minimal.sh",
+  "source_modifications": false,
+  "architecture": "Windows x64",
+  "files": {
+    "avcodec-63.dll": "59a2a48b4819fcdc748b4ff24769b8095cfd2cce1dfbabb5585d3a97ad5056c9",
+    "avfilter-12.dll": "0cae7cfbc4a1019f2254ceda3a827cc29792086a0557e64fcaef3c5385819a9a",
+    "avformat-63.dll": "9a20f773f3aab97cab56577b1ad0d4b37a45310a3e5beda6022e3c855fc51922",
+    "avutil-61.dll": "0268ad959cad5e4b3a030d41c1cf346aadc47c8c385b5ea93d284666f66e47e5",
+    "ffmpeg.exe": "1a1a44fb97066e794264626f86da9561adf60e4beb209931258378da0ea4293a",
+    "libvpl.dll": "c5ab3ace29052fb7e35766659b8faff16654990aa74b09df6ace863bf472ad49",
+    "libwinpthread-1.dll": "b2102b2f9a8434ba92885bf772791f97cc659cb499392840d16eb3fd4ecf79c2",
+    "swscale-10.dll": "ba69bf4c80b041ec4f8243dcb40ae29573097e1554d0a488a73d8faaf6cbd367"
+  },
+  "file_sizes": {
+    "avcodec-63.dll": 728499,
+    "avfilter-12.dll": 199445,
+    "avformat-63.dll": 528903,
+    "avutil-61.dll": 736155,
+    "ffmpeg.exe": 417792,
+    "libvpl.dll": 1172094,
+    "libwinpthread-1.dll": 59133,
+    "swscale-10.dll": 920591
+  },
+  "runtime_size_bytes": 4762612,
+  "previous_runtime_size_bytes": 157019136,
+  "retained_encoders": [
+    "av1_nvenc",
+    "av1_qsv",
+    "av1_amf",
+    "hevc_nvenc",
+    "hevc_qsv",
+    "hevc_amf",
+    "mjpeg_qsv"
+  ],
+  "retained_decoders": [
+    "png"
+  ],
+  "retained_demuxers": [
+    "image2",
+    "image2pipe"
+  ],
+  "retained_muxers": [
+    "avif",
+    "mp4",
+    "image2"
+  ],
+  "retained_filters": [
+    "buffer",
+    "buffersink",
+    "scale",
+    "format",
+    "setparams",
+    "null",
+    "hwupload"
+  ],
+  "components": [
+    {
+      "name": "FFmpeg",
+      "version": "9.0.2",
+      "commit": "46d8f462eeb87ee1f704d8c44a0ee24fca471ad1",
+      "license": "LGPL-2.1-or-later",
+      "source_url": "https://github.com/FFmpeg/FFmpeg/archive/46d8f462eeb87ee1f704d8c44a0ee24fca471ad1.tar.gz",
+      "source_archive": "sources/FFmpeg-46d8f462eeb87ee1f704d8c44a0ee24fca471ad1.tar.gz",
+      "source_archive_sha256": "56999ad7cdcfbe520e989e38ac763341fab71b367ef8c20434117f8d1b7204a9",
+      "source_archive_generation": "Official unmodified source archive"
+    },
+    {
+      "name": "nv-codec-headers",
+      "version": "12.1.14.0",
+      "commit": "1889e62e2d35ff7aa9baca2bceb14f053785e6f1",
+      "license": "MIT",
+      "source_url": "https://github.com/FFmpeg/nv-codec-headers/tree/1889e62e2d35ff7aa9baca2bceb14f053785e6f1",
+      "source_archive": "sources/nv-codec-headers-1889e62e2d35ff7aa9baca2bceb14f053785e6f1.tar.gz",
+      "source_archive_sha256": "e30d4791fd386de8b5c9f88dec781e546ec148b8808440dd421da5f26c2700ae",
+      "source_archive_generation": "git archive --format=tar --prefix=nv-codec-headers-1889e62e2d35ff7aa9baca2bceb14f053785e6f1/ COMMIT | gzip -n"
+    },
+    {
+      "name": "libvpl",
+      "version": "2.17.0",
+      "commit": "674d015bcb294bc39fa276e99a652ea045423e82",
+      "license": "MIT",
+      "source_url": "https://github.com/intel/libvpl/tree/674d015bcb294bc39fa276e99a652ea045423e82",
+      "source_archive": "sources/libvpl-674d015bcb294bc39fa276e99a652ea045423e82.tar.gz",
+      "source_archive_sha256": "9d5d3c221b9d41468e04add6855cf5eec6df06dae7be649f84e1f846c98e38fb",
+      "source_archive_generation": "git archive --format=tar --prefix=libvpl-674d015bcb294bc39fa276e99a652ea045423e82/ COMMIT | gzip -n"
+    },
+    {
+      "name": "AMF headers",
+      "version": "1.5.3",
+      "commit": "8c648005e07d4309033282bfd9947df2c7e76104",
+      "license": "MIT",
+      "source_url": "https://github.com/GPUOpen-LibrariesAndSDKs/AMF/tree/8c648005e07d4309033282bfd9947df2c7e76104",
+      "source_archive": "sources/AMF-headers-8c648005e07d4309033282bfd9947df2c7e76104.tar.gz",
+      "source_archive_sha256": "e811da7ee9923aaa680f906214f0fe78de57cc2bf34330066c247592b3e0bb9e",
+      "source_archive_generation": "git archive --format=tar --prefix=AMF-headers-8c648005e07d4309033282bfd9947df2c7e76104/ COMMIT amf/public/include LICENSE.txt | gzip -n"
+    },
+    {
+      "name": "zlib",
+      "version": "1.3.2",
+      "commit": null,
+      "license": "Zlib",
+      "source_url": "https://zlib.net/fossils/zlib-1.3.2.tar.gz",
+      "source_archive": "sources/zlib-1.3.2.tar.gz",
+      "source_archive_sha256": "bb329a0a2cd0274d05519d61c667c062e06990d72e125ee2dfa8de64f0119d16",
+      "source_archive_generation": "Official unmodified source archive"
+    }
+  ],
+  "toolchain": {
+    "compiler": "MinGW-w64 GCC 13.2.0 POSIX",
+    "mingw_w64": "11.0.1",
+    "binutils": "2.41.90.20240122",
+    "nasm": "2.16.01",
+    "libwinpthread": "MinGW-w64 11.0.1, libwinpthread-1.dll",
+    "compiler_runtime": "Static libgcc/libstdc++ with GCC Runtime Library Exception 3.1",
+    "package_source_urls": [
+      "https://launchpad.net/ubuntu/+source/gcc-mingw-w64/26.1",
+      "https://launchpad.net/ubuntu/+source/mingw-w64/11.0.1-3build1"
+    ]
+  },
+  "minimum_nvidia_windows_driver": "531.61; requested codec must be supported by the GPU",
+  "verification": {
+    "actual_device": "NVIDIA GeForce RTX 3070",
+    "actual_driver": "616.92",
+    "hevc_nvenc_heif": "Passed real encode, decode, 50% resize, six-color probe, full-range BT709/sRGB and original preservation",
+    "av1_on_rtx3070": "Unsupported codec: real probe fails and application falls back to CPU",
+    "qsv_and_amf": "All encoders retained; no matching physical Intel/AMD GPU is present on this validation host",
+    "pe_dependencies": "Only bundled adjacent DLLs and standard Windows system DLLs are statically required"
+  }
+}

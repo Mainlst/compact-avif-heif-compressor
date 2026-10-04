@@ -1,0 +1,25 @@
+.venv/
+.venv-win/
+.venv-linux312/
+.python-win/
+.build-tools/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+build/
+dist/
+.DS_Store
+
+# Keep the README preview; the original reference screenshot stays local.
+sample/*
+!sample/app-preview.png
+
+# Editor files, local settings and build evidence.
+.vscode/
+.idea/
+.env
+.env.*
+!.env.example
+settings.json
+*.log
+*.tmp

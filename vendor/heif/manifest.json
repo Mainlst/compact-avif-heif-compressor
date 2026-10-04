@@ -1,0 +1,194 @@
+{
+  "project": "Image Compressor HEIF runtime",
+  "platform": "Windows x86_64 CPython 3.13",
+  "date": "2026-10-04",
+  "wheel": {
+    "filename": "pillow_heif-1.8.0-cp313-cp313-win_amd64.whl",
+    "source_url": "https://files.pythonhosted.org/packages/71/77/fa70118bafb15584e49cba1af544d5be6756b5bfaca76ce25d42481bf4c2/pillow_heif-1.8.0-cp313-cp313-win_amd64.whl",
+    "sha256": "70161d9963702d94bbaa31b2e08e43f6fb3baffccfac8c9ec1d702f6ff620cde",
+    "pypi_url": "https://pypi.org/project/pillow-heif/1.8.0/"
+  },
+  "runtime_info": {
+    "libheif": "1.23.4",
+    "HEIF": "x265 HEVC encoder (4.3+1-e9b8812)",
+    "AVIF": "",
+    "encoders": {
+      "x265": "x265 HEVC encoder (4.3+1-e9b8812)",
+      "mask": "mask"
+    },
+    "decoders": {
+      "libde265": "libde265 HEVC decoder, version 1.1.3"
+    }
+  },
+  "binaries": {
+    "_pillow_heif.cp313-win_amd64.pyd": {
+      "sha256": "bbcd0579b4c30046755c0b2928b59187b38ce6de9691593af0eb568ceb7ee57e",
+      "bytes": 59904
+    },
+    "libde265-0-863aced21c291386b51bbbd6c57331e8.dll": {
+      "sha256": "a7f02f5bfa0072ea39aabfc6bdf51f35e972bc0b0dc5fe7910840fae3b7245de",
+      "bytes": 960000
+    },
+    "libgcc_s_seh-1-7579db3ccd9543f896752ed45d8cb013.dll": {
+      "sha256": "1a67c59f99d6ffbd8b96ac9276fb7e625b2769f5b355503d568e85657439f865",
+      "bytes": 147968
+    },
+    "libheif-30fc1b3ceee9088934615cbf4948eba3.dll": {
+      "sha256": "6223de1181ea35f394b380f2142be64406659ebf7026a2cb61d181c16e42ae9b",
+      "bytes": 2201088
+    },
+    "libstdc++-6-a168feb806be6a6b9920422b91e14e6f.dll": {
+      "sha256": "5323c98bdb4480833da9d1b36993503bdc5d1120dbfb3ac067cc8957b34c4568",
+      "bytes": 2652672
+    },
+    "libwinpthread-1-cd4f4bcf906810bdc5341685d1696fa6.dll": {
+      "sha256": "cd4f4bcf906810bdc5341685d1696fa6005c76888acfb5a1397af4c319517859",
+      "bytes": 62976
+    },
+    "libx265-217-8a7f7f4ebe0ffaa73ce4bb306c2d18d6.dll": {
+      "sha256": "ec2805e477f2d144b8964234689abe59ab0331fc450efd2d6d5b68b5d1fc31da",
+      "bytes": 22667339
+    }
+  },
+  "components": [
+    {
+      "name": "pillow-heif",
+      "version": "1.8.0",
+      "runtime_version": "1.8.0",
+      "license": "BSD-3-Clause (source); upstream Windows wheel declares GPLv2 due to bundled libraries",
+      "commit": "1486e9fbf38d9e1b52706cba8182ab03bfa3cfed",
+      "repository": "https://github.com/bigcat88/pillow_heif",
+      "source_url": "https://files.pythonhosted.org/packages/bb/4c/d5319a1f276c70528ff97893afc42a300ff28029e27ca8de89bb3b271680/pillow_heif-1.8.0.tar.gz",
+      "source_sha256": "e47c27432c6fd3d66c22f0de9f27fd379383b646c947520bc485854ce72060d0"
+    },
+    {
+      "name": "libheif",
+      "version": "1.23.4",
+      "runtime_version": "1.23.4",
+      "license": "LGPL-3.0",
+      "commit": "4e14f5942c1732ace9611b9522cc991501445463",
+      "repository": "https://github.com/strukturag/libheif",
+      "source_url": "https://github.com/strukturag/libheif/archive/4e14f5942c1732ace9611b9522cc991501445463.tar.gz"
+    },
+    {
+      "name": "libde265",
+      "version": "1.1.3",
+      "runtime_version": "libde265 HEVC decoder, version 1.1.3",
+      "license": "LGPL-3.0",
+      "commit": "ba62bf4cfb3242f3bf0a45617ff09e35236e4d82",
+      "repository": "https://github.com/strukturag/libde265",
+      "source_url": "https://github.com/strukturag/libde265/archive/ba62bf4cfb3242f3bf0a45617ff09e35236e4d82.tar.gz"
+    },
+    {
+      "name": "x265",
+      "version": "4.3",
+      "runtime_version": "4.3+1-e9b8812",
+      "license": "GPL-2.0-or-later; full terms in source headers and COPYING",
+      "commit": "e9b88125dc21393b3fd8d68e98083bdfb89778a8",
+      "repository": "https://github.com/Multicorewareinc/x265",
+      "note": "Installed wheel LICENSES_bundled.txt lists x265 4.2. Actual Windows DLL reports 4.3+1-e9b8812; this manifest uses the runtime commit.",
+      "source_url": "https://github.com/Multicorewareinc/x265/archive/e9b88125dc21393b3fd8d68e98083bdfb89778a8.tar.gz"
+    },
+    {
+      "name": "GCC MinGW runtime",
+      "version": "compiler strings: GCC 16.2.0, MSYS2 Rev3 and Rev4",
+      "license": "GPL-3.0 with GCC Runtime Library Exception 3.1",
+      "source_url": "https://ftp.gnu.org/gnu/gcc/gcc-16.2.0/gcc-16.2.0.tar.xz",
+      "build_recipe_url": "https://github.com/msys2/MINGW-packages/tree/master/mingw-w64-gcc",
+      "note": "Runtime DLLs are supplied unmodified by the Windows wheel; exact MSYS2 package revision is not established by wheel metadata."
+    },
+    {
+      "name": "MinGW-w64 winpthreads",
+      "version": "not recorded in wheel metadata",
+      "license": "MIT and BSD; see COPYING-winpthreads.txt",
+      "repository": "https://github.com/mingw-w64/mingw-w64",
+      "license_source_commit": "2b2acb3ae1f5871fb40f19aa5dbf8e7083d4e108",
+      "build_recipe_url": "https://github.com/msys2/MINGW-packages/tree/master/mingw-w64-winpthreads",
+      "note": "License texts copied from upstream; source revision of the supplied DLL is not established by wheel metadata."
+    }
+  ],
+  "license_sources": [
+    {
+      "file": "licenses/LICENSES-bundled-wheel.txt",
+      "source": "Installed official Windows wheel dist-info/licenses/LICENSES_bundled.txt",
+      "sha256": "e66e5864371a3b082902dbb80424203d8ff5c7e2a9e239e403e7433cda1510c1",
+      "bytes": 1153
+    },
+    {
+      "file": "licenses/LICENSE-pillow-heif.txt",
+      "source": "Installed official Windows wheel dist-info/licenses/LICENSE.txt",
+      "sha256": "9e2635f155b00af5a46cb2f2c9b052072ec546d59837ee74efc9cba2cbb83f3d",
+      "bytes": 1546
+    },
+    {
+      "file": "licenses/COPYING-libheif.txt",
+      "source_url": "https://raw.githubusercontent.com/strukturag/libheif/v1.23.4/COPYING",
+      "sha256": "fa81ce652315b013359d6e8e4744335f31a50c7c192907176d3632f78a3b4596",
+      "bytes": 44366
+    },
+    {
+      "file": "licenses/COPYING-libde265.txt",
+      "source_url": "https://raw.githubusercontent.com/strukturag/libde265/v1.1.3/COPYING",
+      "sha256": "02cc1585a20677992e0ba578fa692635dc193735f2691dc81de924b51c4e8020",
+      "bytes": 44339
+    },
+    {
+      "file": "licenses/COPYING-x265.txt",
+      "source_url": "https://raw.githubusercontent.com/Multicorewareinc/x265/e9b8812/COPYING",
+      "sha256": "d8afb1bcc7a2cfc603683b168d6987ef0a48e59e0da3693bf55c5d33b67e2b49",
+      "bytes": 18120
+    },
+    {
+      "file": "licenses/COPYING-GCC-runtime-exception.txt",
+      "source_url": "https://raw.githubusercontent.com/gcc-mirror/gcc/releases/gcc-16.2.0/COPYING.RUNTIME",
+      "sha256": "9d6b43ce4d8de0c878bf16b54d8e7a10d9bd42b75178153e3af6a815bdc90f74",
+      "bytes": 3324
+    },
+    {
+      "file": "licenses/COPYING-GPLv3.txt",
+      "source_url": "https://raw.githubusercontent.com/gcc-mirror/gcc/releases/gcc-16.2.0/COPYING3",
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903",
+      "bytes": 35147
+    },
+    {
+      "file": "licenses/COPYING-winpthreads.txt",
+      "source_url": "https://raw.githubusercontent.com/mingw-w64/mingw-w64/master/mingw-w64-libraries/winpthreads/COPYING",
+      "sha256": "63263614cdd29f2f93cba85e992f041b31f9fc7b4033692f31269489a8a1b177",
+      "bytes": 2883
+    },
+    {
+      "file": "licenses/COPYING-mingw-w64.txt",
+      "source_url": "https://raw.githubusercontent.com/mingw-w64/mingw-w64/master/COPYING",
+      "sha256": "99a69660981156c21336fdb5661f89341b013c94e4bf9e1c7467b4745718397f",
+      "bytes": 2326
+    }
+  ],
+  "build_recipes": [
+    {
+      "file": "build-recipes/pillow-heif-wheels.yml",
+      "source_url": "https://raw.githubusercontent.com/bigcat88/pillow_heif/1486e9fbf38d9e1b52706cba8182ab03bfa3cfed/.github/workflows/wheels.yml",
+      "sha256": "20d319c99028d6264558adcefecd846a1949a524c7ad1ae26bd70d0bd7a2ef30"
+    },
+    {
+      "file": "build-recipes/pillow-heif-build_libs.py",
+      "source_url": "https://raw.githubusercontent.com/bigcat88/pillow_heif/1486e9fbf38d9e1b52706cba8182ab03bfa3cfed/libheif/build_libs.py",
+      "sha256": "13cb4cff910b7a007d80063453a6312c1c72c2cdbf6d2e3a99e35a370e9ee876"
+    },
+    {
+      "file": "build-recipes/pillow-heif-pyproject.toml",
+      "source_url": "https://raw.githubusercontent.com/bigcat88/pillow_heif/1486e9fbf38d9e1b52706cba8182ab03bfa3cfed/pyproject.toml",
+      "sha256": "a5cb5be4340e98bb35776130f9df8bae845da5ab8b0160490b8e7bece36aa075"
+    },
+    {
+      "file": "build-recipes/pillow-heif-setup.py",
+      "source_url": "https://raw.githubusercontent.com/bigcat88/pillow_heif/1486e9fbf38d9e1b52706cba8182ab03bfa3cfed/setup.py",
+      "sha256": "eff81a18155b14ae01307c7dc8fce6cff489cac7582f1ddd3949290f20df85db"
+    }
+  ],
+  "source_archives_included": false,
+  "notes": [
+    "License notices and exact native binary hashes are retained. URLs identify matching core library source revisions.",
+    "The installed wheel bundled-license file has a stale x265 version; runtime detection and binary strings take precedence.",
+    "This manifest records upstream third-party licenses and does not grant a license for the application source."
+  ]
+}

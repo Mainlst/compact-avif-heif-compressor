@@ -1,0 +1,46 @@
+HEIF / HEIC runtime included with Image Compressor
+
+This directory preserves third-party license texts, upstream build recipes,
+the installed Windows wheel metadata, source locations and native file hashes.
+The bundled native libraries are unmodified copies from the official PyPI
+pillow_heif-1.8.0-cp313-cp313-win_amd64.whl distribution.
+
+Detected Windows runtime versions:
+  pillow-heif 1.8.0
+  libheif 1.23.4
+  libde265 1.1.3
+  x265 4.3+1-e9b8812
+
+Upstream licenses:
+  pillow-heif source: BSD-3-Clause.
+  Official binary wheel: its LICENSES_bundled.txt declares GPLv2 due to the
+  bundled libraries. This declaration is reproduced unchanged in licenses/.
+  libheif and libde265: GNU LGPL version 3.
+  x265: GNU GPL version 2 or later, as stated in its source headers.
+  libgcc/libstdc++: GNU GPL version 3 with GCC Runtime Library Exception 3.1.
+  MinGW-w64 winpthreads: MIT and BSD notices in COPYING-winpthreads.txt.
+
+The installed wheel's bundled-license notice lists x265 4.2, but its Windows
+encoder and DLL strings report 4.3+1-e9b8812. The manifest records the detected
+version and the matching official MulticoreWare source commit:
+e9b88125dc21393b3fd8d68e98083bdfb89778a8.
+
+Matching core source locations:
+  https://github.com/bigcat88/pillow_heif/tree/v1.8.0
+  https://github.com/strukturag/libheif/tree/v1.23.4
+  https://github.com/strukturag/libde265/tree/v1.1.3
+  https://github.com/Multicorewareinc/x265/tree/e9b88125dc21393b3fd8d68e98083bdfb89778a8
+
+manifest.json contains source-archive URLs, the PyPI wheel/sdist checksums,
+the detected runtime information, seven native binary checksums, and the
+provenance of every retained license and build-recipe file.
+wheel-metadata/ retains the installed METADATA, WHEEL, RECORD and DELVEWHEEL.
+build-recipes/ retains the upstream wheel workflow, setup and build scripts.
+Windows wheel builds obtain native dependencies through MSYS2; exact MSYS2
+runtime package revisions are not identified by the installed wheel metadata.
+
+Source archives are not embedded in this directory or in the EXE. Retaining
+license texts and source URLs alone does not substitute for the corresponding
+source/relinking terms in the GPL/LGPL when distributing covered binaries.
+This notice records third-party licenses and does not grant or change a
+license for Image Compressor's own source code.

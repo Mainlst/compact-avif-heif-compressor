@@ -1,0 +1,72 @@
+{
+  "project": "AOMediaCodec/libavif",
+  "version": "1.4.2",
+  "release_url": "https://github.com/AOMediaCodec/libavif/releases/tag/v1.4.2",
+  "upstream_commit": "bd32fb40a3b2028eb555b67f769c57a32ed8a1b4",
+  "assets": [
+    {
+      "platform": "linux",
+      "source_url": "https://github.com/AOMediaCodec/libavif/releases/download/v1.4.2/linux-artifacts.zip",
+      "archive_sha256": "faf58a670ffbfdc0e3559e6d37592cff277c447dd39453f1cd1d7d7f5a20b8ef",
+      "verified_against_github_release_digest": true,
+      "binary_path": "linux/avifenc",
+      "binary_sha256": "bfa76fdb43b4903972ed2baedbff889d4f1e0b19efe7fe934044cf83e4b709a5",
+      "binary_bytes": 14760144
+    },
+    {
+      "platform": "windows",
+      "source_url": "https://github.com/AOMediaCodec/libavif/releases/download/v1.4.2/windows-artifacts.zip",
+      "archive_sha256": "cb2d9fea43dcbab1d0707e3b37eb7b08070ad2fb60a2c188c39ec12382c0484a",
+      "verified_against_github_release_digest": true,
+      "binary_path": "windows/avifenc.exe",
+      "binary_sha256": "42312321ed9f715987cb3623292eaedc778970b45efb9b1de62ce795f61991a0",
+      "binary_bytes": 12408832
+    }
+  ],
+  "license_sources": [
+    {
+      "file": "LICENSE-aom.txt",
+      "source_url": "https://aomedia.googlesource.com/aom/+/refs/tags/v3.14.1/LICENSE?format=TEXT"
+    },
+    {
+      "file": "PATENTS-aom.txt",
+      "source_url": "https://aomedia.googlesource.com/aom/+/refs/tags/v3.14.1/PATENTS?format=TEXT"
+    },
+    {
+      "file": "LICENSE-dav1d.txt",
+      "source_url": "https://code.videolan.org/videolan/dav1d/-/raw/1.5.3/COPYING"
+    },
+    {
+      "file": "LICENSE-libyuv.txt",
+      "source_url": "https://chromium.googlesource.com/libyuv/libyuv/+/644251f25/LICENSE?format=TEXT"
+    },
+    {
+      "file": "LICENSE-libsharpyuv.txt",
+      "source_url": "https://chromium.googlesource.com/webm/libwebp/+/refs/tags/v1.6.0/COPYING?format=TEXT"
+    },
+    {
+      "file": "PATENTS-libsharpyuv.txt",
+      "source_url": "https://chromium.googlesource.com/webm/libwebp/+/refs/tags/v1.6.0/PATENTS?format=TEXT"
+    },
+    {
+      "file": "LICENSE-libjpeg-turbo.md",
+      "source_url": "https://raw.githubusercontent.com/libjpeg-turbo/libjpeg-turbo/3.1.4.1/LICENSE.md"
+    },
+    {
+      "file": "LICENSE-libpng.txt",
+      "source_url": "https://raw.githubusercontent.com/pnggroup/libpng/v1.6.58/LICENSE"
+    },
+    {
+      "file": "LICENSE-zlib.txt",
+      "source_url": "https://raw.githubusercontent.com/madler/zlib/v1.3.2/LICENSE"
+    },
+    {
+      "file": "LICENSE-IJG.txt",
+      "source_url": "https://raw.githubusercontent.com/libjpeg-turbo/libjpeg-turbo/3.1.4.1/README.ijg"
+    },
+    {
+      "file": "LICENSE-libavif.txt",
+      "source_url": "https://raw.githubusercontent.com/AOMediaCodec/libavif/v1.4.2/LICENSE"
+    }
+  ]
+}

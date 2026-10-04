@@ -1,0 +1,31 @@
+Bundled lossless AVIF encoder
+============================
+
+The avifenc binaries are unmodified upstream x86-64 release artifacts of
+AOMediaCodec/libavif 1.4.2:
+https://github.com/AOMediaCodec/libavif/releases/tag/v1.4.2
+
+Archive SHA-256 values were verified against the digests published by the
+GitHub release API. The archive URLs, digests, extracted executable digests,
+and license source URLs are recorded in manifest.json.
+
+The upstream release build statically includes these dependencies:
+  libaom 3.14.1         LICENSE-aom.txt, PATENTS-aom.txt
+  dav1d 1.5.3          LICENSE-dav1d.txt
+  libyuv 644251f25     LICENSE-libyuv.txt
+  libsharpyuv 1.6.0    LICENSE-libsharpyuv.txt, PATENTS-libsharpyuv.txt
+  libjpeg-turbo 3.1.4.1 LICENSE-libjpeg-turbo.md, LICENSE-IJG.txt
+  libpng 1.6.58        LICENSE-libpng.txt
+  zlib 1.3.2           LICENSE-zlib.txt
+
+The libavif license and its included third-party notices are reproduced in
+LICENSE-libavif.txt. The source revision and release workflows are available
+in the upstream repository. On Windows the binary also uses the Microsoft
+C runtime already required by the bundled Python runtime.
+
+This software is based in part on the work of the Independent JPEG Group.
+
+The Windows application bundles windows/avifenc.exe and these notices.
+linux/avifenc is provided for development and verification on x86-64 Linux.
+
+No executable is downloaded while the application runs.

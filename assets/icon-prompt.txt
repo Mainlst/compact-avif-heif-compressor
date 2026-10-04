@@ -1,0 +1,27 @@
+Mode: built-in image_gen, transparent background
+Use case: logo-brand
+
+Initial generation prompt:
+Asset type: Windows desktop application icon for a small image compression utility.
+Primary request: Make one polished, simple icon suggesting an image being compressed, no words.
+Scene/backdrop: Genuinely transparent background.
+Subject: A rounded square image tile in deep blue, with one bold pale mountain silhouette and a tiny circular sun, accompanied by two short teal opposing arrows pointing inward toward the image tile to suggest reducing its size.
+Style/medium: Flat graphic icon, crisp smooth curves and clean geometry, no thin strokes, no photo texture. Restrained modern blue and teal palette.
+Composition/framing: One centered symbol on a square canvas. Use the full available area with a narrow transparent safety margin. Clear silhouette with only a few bold shapes, legible at 16px and 32px.
+Constraints: No text, letters, numbers, badges, extra tiles, gradients, perspective, watermark, or shadow. Preserve true alpha transparency; do not draw a checkerboard.
+
+Final refinement prompt (the first generated image was the reference):
+Use case: logo-brand
+Asset type: Windows application icon, readable at 16px and 32px.
+Primary request: Refine the referenced blue photo tile and teal inward-arrow icon. Keep its blue, teal and white palette, rounded shapes, mountain and sun. Make the symbol much more compact and square: the blue photo tile should occupy 86% of the canvas width and height, with the two teal inward arrows overlaid partly on the left and right tile edges instead of sitting far outside the tile. The tile must dominate the icon.
+Style/medium: Crisp flat icon, very simple broad shapes.
+Composition/framing: Center all artwork on a square canvas, with a small transparent margin on all sides. Enlarge the entire symbol; only a small transparent margin outside the mark.
+Constraints: Maintain actual transparent background. No text, watermarks, gradients, photo texture, decorative specks, or shadows. Keep a strong recognizable image silhouette at tiny sizes.
+
+Final files:
+app-icon-source.png: unchanged generated RGBA source, 1254 x 1254
+app-icon.png: 256 x 256 PNG
+app-icon.ico: 16, 20, 24, 32, 40, 48, 64, 128, and 256 pixel sizes
+app-icon-16.png, app-icon-20.png, app-icon-32.png: small PNG assets
+
+Only resampling and icon format conversion were performed with Pillow.

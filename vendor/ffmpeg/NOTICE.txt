@@ -1,0 +1,38 @@
+FFmpeg minimal Windows x64 shared runtime for Image Compressor
+
+FFmpeg 9.0.2, commit 46d8f462eeb87ee1f704d8c44a0ee24fca471ad1.
+Copyright (c) 2000-2026 the FFmpeg developers.
+The FFmpeg source is unmodified. This custom shared-library build is licensed
+under LGPL version 2.1 or later; see LICENSE.txt and COPYING.LGPLv2.1.
+Its ffmpeg.exe and adjacent DLLs remain replaceable. It includes no GPL or
+nonfree FFmpeg components. Compiler-runtime exceptions are listed below.
+
+The application uses FFmpeg only for PNG input, GPU image encoding, color
+conversion and AVIF/MP4/JPEG muxing. The seven retained encoders are:
+av1_nvenc, hevc_nvenc, av1_qsv, hevc_qsv, mjpeg_qsv, av1_amf, hevc_amf.
+Other application formats and lossless encoders use the existing Pillow and
+pillow-heif CPU paths. Hardware is enabled only after a verified real encode.
+Compatible vendor GPU drivers must be installed separately.
+
+Additional components:
+- NVIDIA nv-codec-headers 12.1.14.0 (MIT; headers only).
+- Intel libvpl 2.17.0 dispatcher (MIT; shared libvpl.dll).
+- AMD AMF 1.5.3 headers (MIT; headers only).
+- zlib 1.3.2 (zlib license; statically linked PNG dependency).
+- MinGW-w64 11.0.1 CRT and winpthreads (ZPL/MIT/BSD and public-domain parts).
+- GCC 13.2 libgcc/libstdc++ (GPLv3 with GCC Runtime Library Exception 3.1).
+The relevant notices are retained under licenses/, with GPL text also in
+COPYING.GPLv3. The GCC exception permits this LGPL/MIT combined distribution.
+
+The pinned source URLs, archive hashes, runtime hashes, toolchain, and enabled
+features are recorded in manifest.json. Corresponding source archives are
+retained under vendor/ffmpeg/sources/ in the application source repository.
+Large source archives are excluded from the application download; the small
+sources/SHA256SUMS file and rebuild-minimal.sh are included with the runtime.
+The script fetches missing archives from the pinned official repositories and
+verifies their hashes before building. SOURCE_DIR can select a writable source
+directory containing the supplied SHA256SUMS. Requires a Linux MinGW-w64
+cross toolchain, CMake, make, nasm, pkgconf/pkg-config, git and curl.
+Run bash rebuild-minimal.sh; it creates a new temporary runtime directory
+without overwriting the installed vendor files. Keep all generated DLLs
+adjacent to ffmpeg.exe and validate a replacement on Windows before use.
