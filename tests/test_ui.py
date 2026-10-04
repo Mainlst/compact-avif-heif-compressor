@@ -151,6 +151,8 @@ class DesktopWorkflowTests(unittest.TestCase):
 
     def test_cancel_finishes_current_image_and_ui_stays_responsive(self):
         files = [self.image(f"{index}.png") for index in range(3)]
+        self.app.completion_sound.set(True)
+        self.app.auto_close.set(True)
         entered = threading.Event()
         release = threading.Event()
         calls = []
@@ -162,11 +164,12 @@ class DesktopWorkflowTests(unittest.TestCase):
                 raise RuntimeError("Test encoder release timed out")
             return convert_image(source, settings, output_dir)
 
-        with patch("compressor.ui.convert_image", side_effect=slow_convert):
+        with patch("compressor.ui.convert_image", side_effect=slow_convert), patch("compressor.ui.play_completion_sound") as sound:
             self.app.start(files)
             try:
                 self.wait_for(entered.is_set)
                 self.assertTrue(self.app.browse_button.instate(["disabled"]))
+                self.assertTrue(self.app.overwrite_check.instate(["disabled"]))
                 self.assertEqual(self.app._drop(SimpleNamespace(data=str(files[0]))), "refuse_drop")
                 ticked = []
                 self.root.after(10, lambda: ticked.append(True))
@@ -176,10 +179,13 @@ class DesktopWorkflowTests(unittest.TestCase):
             finally:
                 release.set()
             self.wait_for(lambda: not self.app.busy)
+            sound.assert_not_called()
         self.assertEqual(len(calls), 1)
         self.assertEqual(len(self.app.results), 1)
         self.assertIn("中止", self.app.status.get())
         self.assertFalse(self.app.browse_button.instate(["disabled"]))
+        self.assertFalse(self.app.overwrite_check.instate(["disabled"]))
+        self.assertFalse(self.app.closing)
 
     def test_compact_main_keeps_controls_visible_when_history_opens(self):
         initial_size = (self.root.winfo_width(), self.root.winfo_height())
@@ -354,16 +360,23 @@ class DesktopWorkflowTests(unittest.TestCase):
         self.assertTrue(self.app.folder_entry.instate(["disabled"]))
 
     def test_original_replacement_checkbox_disables_destination_controls(self):
+        self.assertIs(self.app.overwrite_check.winfo_toplevel(), self.root)
+        self.assertTrue(self.app.overwrite_check.winfo_ismapped())
+        self.assertEqual(self.app.advanced_window.state(), "withdrawn")
         self.app.folder_mode.set("custom")
         self.app._refresh_controls()
         self.assertFalse(self.app.folder_entry.instate(["disabled"]))
         self.app.overwrite_check.invoke()
         self.assertTrue(self.app.overwrite_original.get())
+        saved = json.loads((self.directory / "settings.json").read_text(encoding="utf-8"))
+        self.assertIs(saved["overwrite_original"], True)
         self.assertEqual(self.app.folder_mode.get(), "same")
         for widget in (self.app.same_radio, self.app.custom_radio, self.app.folder_entry, self.app.folder_button):
             self.assertTrue(widget.instate(["disabled"]))
         self.app.overwrite_check.invoke()
         self.assertFalse(self.app.overwrite_original.get())
+        saved = json.loads((self.directory / "settings.json").read_text(encoding="utf-8"))
+        self.assertIs(saved["overwrite_original"], False)
         self.assertFalse(self.app.same_radio.instate(["disabled"]))
         self.assertFalse(self.app.custom_radio.instate(["disabled"]))
         self.app.folder_mode.set("custom")
@@ -371,6 +384,224 @@ class DesktopWorkflowTests(unittest.TestCase):
         self.assertFalse(self.app.folder_entry.instate(["disabled"]))
         self.assertFalse(self.app.folder_button.instate(["disabled"]))
         self.assertEqual((self.root.winfo_width(), self.root.winfo_height()), (196, 328))
+
+    def test_completion_preferences_are_saved_immediately_and_reloaded(self):
+        names = ("completion_sound", "auto_close", "always_on_top")
+        self.app.show_advanced()
+        self.root.update()
+        for name in names:
+            with self.subTest(preference=name):
+                variable = getattr(self.app, name)
+                checkbox = getattr(self.app, f"{name}_check")
+                self.assertFalse(variable.get())
+                self.assertIs(checkbox.winfo_toplevel(), self.app.advanced_window)
+                self.assertTrue(checkbox.winfo_ismapped())
+                checkbox.invoke()
+                saved = json.loads((self.directory / "settings.json").read_text(encoding="utf-8"))
+                self.assertIs(saved[name], True)
+                self.assertTrue(variable.get())
+        for name in names:
+            getattr(self.app, name).set(False)
+        self.app._load_settings()
+        for name in names:
+            self.assertTrue(getattr(self.app, name).get())
+        self.assertEqual((self.root.winfo_width(), self.root.winfo_height()), COMPACT_CLIENT_SIZE)
+
+    def test_completion_preferences_default_off_and_accept_only_boolean_true(self):
+        names = ("completion_sound", "auto_close", "always_on_top")
+        settings = self.directory / "settings.json"
+        for name in names:
+            self.assertFalse(getattr(self.app, name).get())
+        for value in (None, False, "true", 1, [True]):
+            with self.subTest(value=value):
+                for name in names:
+                    getattr(self.app, name).set(True)
+                data = {} if value is None else dict.fromkeys(names, value)
+                settings.write_text(json.dumps(data), encoding="utf-8")
+                self.app._load_settings()
+                for name in names:
+                    self.assertFalse(getattr(self.app, name).get())
+
+    def test_always_on_top_updates_main_and_auxiliary_windows_immediately(self):
+        windows = (self.root, self.app.advanced_window, self.app.history_window)
+        self.app.show_advanced()
+        self.app.toggle_history()
+        self.root.update()
+        with patch.object(windows[0], "attributes", wraps=windows[0].attributes) as main_attributes, \
+                patch.object(windows[1], "attributes", wraps=windows[1].attributes) as advanced_attributes, \
+                patch.object(windows[2], "attributes", wraps=windows[2].attributes) as history_attributes:
+            for enabled in (True, False):
+                self.app.always_on_top_check.invoke()
+                self.root.update()
+                self.assertIs(self.app.always_on_top.get(), enabled)
+                for attributes in (main_attributes, advanced_attributes, history_attributes):
+                    attributes.assert_any_call("-topmost", enabled)
+                # Xvfb without a window manager accepts the request but does
+                # not report a changed topmost property. Windows applies it.
+                if self.root.tk.call("tk", "windowingsystem") == "win32":
+                    for window in windows:
+                        self.assertEqual(bool(window.attributes("-topmost")), enabled)
+                saved = json.loads((self.directory / "settings.json").read_text(encoding="utf-8"))
+                self.assertIs(saved["always_on_top"], enabled)
+
+    def test_completion_sound_plays_once_for_a_batch_and_respects_disabled_setting(self):
+        self.app.output_format.set(FORMAT_LABELS["PNG"])
+        self.app.folder_mode.set("custom")
+        self.app.folder.set(str(self.directory / "output"))
+        self.app._format_changed()
+        sources = [self.image(f"sound-{index}.png") for index in range(2)]
+        self.app.completion_sound.set(True)
+        with patch("compressor.ui.play_completion_sound") as sound:
+            self.app.start(sources)
+            self.wait_for(lambda: not self.app.busy)
+            self.assertEqual(len(self.app.results), 2)
+            self.assertEqual(self.app.failures, [])
+            sound.assert_called_once_with(self.root)
+            self.app.completion_sound.set(False)
+            self.app.start(sources)
+            self.wait_for(lambda: not self.app.busy)
+            self.assertEqual(len(self.app.results), 2)
+            sound.assert_called_once_with(self.root)
+
+    def test_successful_batch_can_close_automatically_after_notifying(self):
+        self.app.output_format.set(FORMAT_LABELS["PNG"])
+        self.app.folder_mode.set("custom")
+        self.app.folder.set(str(self.directory / "output"))
+        self.app._format_changed()
+        self.app.completion_sound.set(True)
+        self.app.auto_close.set(True)
+        events = []
+        with patch("compressor.ui.play_completion_sound", side_effect=lambda _root: events.append("sound")) as sound, \
+                patch.object(self.app, "_destroy", side_effect=lambda: events.append("close")) as destroy:
+            self.app.start([self.image("automatic-close.png")])
+            self.wait_for(lambda: destroy.called)
+            self.assertFalse(self.app.busy)
+            self.assertTrue(self.app.closing)
+            self.assertEqual(len(self.app.results), 1)
+            self.assertEqual(self.app.failures, [])
+            sound.assert_called_once_with(self.root)
+            destroy.assert_called_once_with()
+            self.root.update()
+            self.assertEqual(events, ["sound", "close"])
+
+    def test_failed_batch_notifies_but_remains_open_for_error_details(self):
+        self.app.output_format.set(FORMAT_LABELS["PNG"])
+        self.app.folder_mode.set("custom")
+        self.app.folder.set(str(self.directory / "output"))
+        self.app._format_changed()
+        corrupt = self.directory / "broken.png"
+        corrupt.write_bytes(b"not an image")
+        self.app.completion_sound.set(True)
+        self.app.auto_close.set(True)
+        with patch("compressor.ui.play_completion_sound") as sound, patch.object(self.app, "_destroy") as destroy:
+            self.app.start([self.image("successful.png"), corrupt])
+            self.wait_for(lambda: not self.app.busy)
+            self.assertEqual(len(self.app.results), 1)
+            self.assertEqual(len(self.app.failures), 1)
+            self.assertTrue(self.app.history_visible)
+            self.assertFalse(self.app.closing)
+            sound.assert_called_once_with(self.root)
+            destroy.assert_not_called()
+
+    def test_batch_without_supported_images_neither_notifies_nor_closes(self):
+        self.app.completion_sound.set(True)
+        self.app.auto_close.set(True)
+        with patch("compressor.ui.play_completion_sound") as sound, patch.object(self.app, "_destroy") as destroy:
+            self.app.start([self.directory / "missing.png"])
+            self.wait_for(lambda: not self.app.busy)
+            self.assertEqual(self.app.results, [])
+            self.assertEqual(self.app.failures, [])
+            self.assertFalse(self.app.closing)
+            sound.assert_not_called()
+            destroy.assert_not_called()
+
+    def test_closing_during_conversion_suppresses_completion_sound(self):
+        entered = threading.Event()
+        release = threading.Event()
+        done_queued = threading.Event()
+        self.app.completion_sound.set(True)
+        self.app.auto_close.set(True)
+
+        def slow_convert(source, settings, output_dir):
+            entered.set()
+            if not release.wait(timeout=5):
+                raise RuntimeError("Test encoder release timed out")
+            return convert_image(source, settings, output_dir)
+
+        put_event = self.app.events.put
+
+        def record_event(event):
+            put_event(event)
+            if event[0] == "done":
+                done_queued.set()
+
+        with patch("compressor.ui.convert_image", side_effect=slow_convert), \
+                patch("compressor.ui.play_completion_sound") as sound, \
+                patch.object(self.app.events, "put", side_effect=record_event), \
+                patch.object(self.app, "_destroy") as destroy:
+            self.app.start([self.image("closing.png")])
+            try:
+                self.wait_for(entered.is_set)
+                release.set()
+                # Close after the worker queues a normal completion but
+                # before Tk consumes it. This also covers the close/finish
+                # race where the queued cancelled flag is still False.
+                self.assertTrue(done_queued.wait(timeout=5))
+                self.app.close()
+                self.assertTrue(self.app.closing)
+                self.assertTrue(self.app.cancel_event.is_set())
+            finally:
+                release.set()
+            self.wait_for(lambda: destroy.called)
+            self.assertFalse(self.app.busy)
+            sound.assert_not_called()
+            destroy.assert_called_once_with()
+
+    def test_cancel_after_completion_is_queued_suppresses_sound_and_automatic_close(self):
+        entered = threading.Event()
+        release = threading.Event()
+        done_queued = threading.Event()
+        self.app.output_format.set(FORMAT_LABELS["PNG"])
+        self.app.folder_mode.set("custom")
+        self.app.folder.set(str(self.directory / "output"))
+        self.app._format_changed()
+        self.app.completion_sound.set(True)
+        self.app.auto_close.set(True)
+
+        def slow_convert(source, settings, output_dir):
+            entered.set()
+            if not release.wait(timeout=5):
+                raise RuntimeError("Test encoder release timed out")
+            return convert_image(source, settings, output_dir)
+
+        put_event = self.app.events.put
+
+        def record_event(event):
+            put_event(event)
+            if event[0] == "done":
+                self.assertIs(event[1], False)
+                done_queued.set()
+
+        with patch("compressor.ui.convert_image", side_effect=slow_convert), \
+                patch("compressor.ui.play_completion_sound") as sound, \
+                patch.object(self.app.events, "put", side_effect=record_event), \
+                patch.object(self.app, "_destroy") as destroy:
+            self.app.start([self.image("queued-completion.png")])
+            try:
+                self.wait_for(entered.is_set)
+                release.set()
+                self.assertTrue(done_queued.wait(timeout=5))
+                self.app.cancel()
+                self.assertTrue(self.app.cancel_event.is_set())
+            finally:
+                release.set()
+            self.wait_for(lambda: not self.app.busy)
+            self.assertEqual(len(self.app.results), 1)
+            self.assertEqual(self.app.failures, [])
+            self.assertIn("中止", self.app.status.get())
+            self.assertFalse(self.app.closing)
+            sound.assert_not_called()
+            destroy.assert_not_called()
 
     def test_mixed_formats_replace_originals_only_when_checked(self):
         self.app.output_format.set(FORMAT_LABELS["PNG"])
@@ -434,6 +665,7 @@ class DesktopWorkflowTests(unittest.TestCase):
             self.app.format_combo, self.app.preset_combo, self.app.size_combo,
             self.app.browse_button, self.app.advanced_button, self.app.folder_button,
             self.app.history_button, self.app.open_button, self.app.cancel_button,
+            self.app.overwrite_check,
         )
         for widget in controls:
             with self.subTest(widget=str(widget)):

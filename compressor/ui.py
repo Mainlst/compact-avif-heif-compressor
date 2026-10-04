@@ -15,6 +15,7 @@ from tkinter import filedialog, font, messagebox, ttk
 
 from .window_chrome import dark_native_caption, install_window_chrome
 from .window_state import WindowPositionTracker
+from .notifications import play_completion_sound
 
 from .engine import (
     INPUT_EXTENSIONS,
@@ -106,6 +107,9 @@ class CompressorApp:
         self.keep_metadata = tk.BooleanVar(value=False)
         self.preserve_image = tk.BooleanVar(value=True)
         self.overwrite_original = tk.BooleanVar(value=False)
+        self.completion_sound = tk.BooleanVar(value=False)
+        self.auto_close = tk.BooleanVar(value=False)
+        self.always_on_top = tk.BooleanVar(value=False)
         self.preservation_note = tk.StringVar(value="全画素を保持")
         self.folder_mode = tk.StringVar(value="same")
         self.folder = tk.StringVar(value=str(Path.home() / "Pictures"))
@@ -115,6 +119,7 @@ class CompressorApp:
         self.window_position = WindowPositionTracker(self.root)
         self._load_settings()
         self._build_ui()
+        self._apply_window_preferences()
         self._refresh_controls()
         self._update_format_note()
         if dnd_available:
@@ -206,8 +211,9 @@ class CompressorApp:
         )
         style.configure("TEntry", padding=(4, 1), borderwidth=0, insertcolor=TEXT)
         style.map("TEntry", fieldbackground=[("disabled", "#202020")], foreground=[("disabled", "#777777")])
-        style.configure("Panel.TCheckbutton", background=PANEL, foreground=TEXT, font=(family, -11), padding=0, indicatorbackground=FIELD)
-        style.map("Panel.TCheckbutton", background=[("active", PANEL)], foreground=[("disabled", "#777777")], indicatorbackground=[("selected", ACCENT), ("active", "#3c3c3c")])
+        for name, background in (("Panel.TCheckbutton", PANEL), ("Main.TCheckbutton", BACKGROUND)):
+            style.configure(name, background=background, foreground=TEXT, font=(family, -11), padding=0, indicatorbackground=FIELD)
+            style.map(name, background=[("active", background)], foreground=[("disabled", "#777777")], indicatorbackground=[("selected", ACCENT), ("active", "#3c3c3c")])
         self._setup_radio_style(style)
         style.configure("Horizontal.TScale", background=ACCENT, troughcolor=FIELD, borderwidth=0, bordercolor=FIELD, lightcolor=FIELD, darkcolor=FIELD)
         style.map("Horizontal.TScale", background=[("disabled", "#777777"), ("active", "#168cda")])
@@ -268,12 +274,13 @@ class CompressorApp:
             foreground=[("disabled", "#777777")],
         )
 
-    def _panel(self, title: str, y: int, height: int) -> tk.Frame:
+    def _panel(self, title: str | None, y: int, height: int) -> tk.Frame:
         panel = tk.Frame(self.main, bg=PANEL, bd=0, highlightthickness=0)
         panel.place(x=6, y=y, width=184, height=height)
-        tk.Label(panel, text=title, bg=PANEL, fg=TEXT, padx=0, pady=0, anchor="w", font=(self.font_family, -11, "bold")).place(
-            x=6, y=4, width=172, height=19,
-        )
+        if title:
+            tk.Label(panel, text=title, bg=PANEL, fg=TEXT, padx=0, pady=0, anchor="w", font=(self.font_family, -11, "bold")).place(
+                x=6, y=4, width=172, height=19,
+            )
         return panel
 
     def _label(self, parent, text, **kwargs):
@@ -313,31 +320,38 @@ class CompressorApp:
         self.format_combo.bind("<<ComboboxSelected>>", self._format_changed)
         self.controls.append(self.format_combo)
 
-        options = self._panel("出力設定", 28, 91)
-        self._label(options, "画質").place(x=6, y=24, width=32, height=22)
+        self.overwrite_check = ttk.Checkbutton(
+            self.main, text="元ファイルを上書き", variable=self.overwrite_original,
+            command=self._overwrite_changed, style="Main.TCheckbutton",
+        )
+        self.overwrite_check.place(x=12, y=27, width=126, height=21)
+        self.controls.append(self.overwrite_check)
+        self.advanced_button = ttk.Button(self.main, text="詳細…", command=self.show_advanced, style="Compact.TButton")
+        self.advanced_button.place(x=142, y=27, width=48, height=21)
+
+        options = self._panel(None, 51, 68)
+        self._label(options, "画質").place(x=6, y=0, width=32, height=23)
         self.preset_combo = ttk.Combobox(
             options, textvariable=self.preset,
             values=[*PRESETS, PRESERVE_PRESET, "カスタム"], state="readonly", width=10,
         )
-        self.preset_combo.place(x=42, y=23, width=136, height=23)
+        self.preset_combo.place(x=42, y=0, width=136, height=23)
         self.preset_combo.bind("<<ComboboxSelected>>", self._preset_changed)
         self.controls.append(self.preset_combo)
         quality_row = tk.Frame(options, bg=PANEL)
-        quality_row.place(x=6, y=46, width=172, height=19)
+        quality_row.place(x=6, y=23, width=172, height=19)
         self.quality_scale = ttk.Scale(quality_row, from_=1, to=100, variable=self.quality, command=self._quality_changed)
         self.quality_scale.place(x=0, y=2, width=140, height=14)
         self.quality_value = self._label(quality_row, "")
         self.quality_value.configure(textvariable=self.quality_text, anchor="e", fg=MUTED)
         self.quality_value.place(x=144, y=0, width=28, height=19)
         self.controls.append(self.quality_scale)
-        self._label(options, "サイズ").place(x=6, y=67, width=34, height=22)
+        self._label(options, "サイズ").place(x=6, y=44, width=34, height=23)
         self.size_combo = ttk.Combobox(options, textvariable=self.max_size, values=list(SIZES), state="readonly", width=10)
-        self.size_combo.place(x=42, y=66, width=136, height=23)
+        self.size_combo.place(x=42, y=44, width=136, height=23)
         self.size_combo.bind("<FocusOut>", self._size_changed)
         self.size_combo.bind("<Return>", self._size_changed)
         self.controls.append(self.size_combo)
-        self.advanced_button = ttk.Button(options, text="詳細…", command=self.show_advanced, style="Compact.TButton")
-        self.advanced_button.place(x=130, y=2, width=48, height=21)
 
         destination = self._panel("出力フォルダー", 122, 87)
         self.same_radio = ttk.Radiobutton(destination, text="入力と同じフォルダ", variable=self.folder_mode, value="same", command=self._refresh_controls, style="Panel.TRadiobutton")
@@ -407,20 +421,36 @@ class CompressorApp:
         )
         self.metadata_check.grid(row=2, column=0, columnspan=2, sticky="w", pady=(9, 0))
         self.controls.append(self.metadata_check)
-        self.overwrite_check = ttk.Checkbutton(
-            body, text="元のファイルを上書き", variable=self.overwrite_original,
-            command=self._overwrite_changed, style="Panel.TCheckbutton",
-        )
-        self.overwrite_check.grid(row=3, column=0, columnspan=2, sticky="w", pady=(9, 0))
-        self.controls.append(self.overwrite_check)
         tk.Label(
-            body, text="有効時は元のフォルダーに保存します。\n形式が変わる場合は拡張子も変え、\n保存・検証後に元ファイルを削除します。",
+            body, text="メイン画面の上書きチェックを有効にすると、\n元のフォルダーに保存します。\n形式が変わる場合は拡張子も変え、\n保存・検証後に元ファイルを削除します。",
             bg=PANEL, fg=MUTED, anchor="w", justify="left", wraplength=260,
-        ).grid(row=4, column=0, columnspan=2, sticky="w", pady=(4, 0))
+        ).grid(row=3, column=0, columnspan=2, sticky="w", pady=(9, 0))
         tk.Label(body, textvariable=self.format_note, bg=PANEL, fg=MUTED, anchor="w", justify="left", wraplength=260).grid(
-            row=5, column=0, columnspan=2, sticky="w", pady=(7, 0),
+            row=4, column=0, columnspan=2, sticky="w", pady=(7, 0),
         )
-        ttk.Button(body, text="閉じる", command=self.advanced_window.withdraw).grid(row=6, column=1, sticky="e", pady=(10, 0))
+        self._label(body, "動作設定", font=(self.font_family, -11, "bold")).grid(
+            row=5, column=0, columnspan=2, sticky="w", pady=(12, 4),
+        )
+        self.completion_sound_check = ttk.Checkbutton(
+            body, text="圧縮完了時に音を鳴らす", variable=self.completion_sound,
+            command=self._preferences_changed, style="Panel.TCheckbutton",
+        )
+        self.completion_sound_check.grid(row=6, column=0, columnspan=2, sticky="w", pady=3)
+        self.auto_close_check = ttk.Checkbutton(
+            body, text="圧縮完了後に自動で終了", variable=self.auto_close,
+            command=self._preferences_changed, style="Panel.TCheckbutton",
+        )
+        self.auto_close_check.grid(row=7, column=0, columnspan=2, sticky="w", pady=3)
+        self.always_on_top_check = ttk.Checkbutton(
+            body, text="常に最前面に表示", variable=self.always_on_top,
+            command=self._preferences_changed, style="Panel.TCheckbutton",
+        )
+        self.always_on_top_check.grid(row=8, column=0, columnspan=2, sticky="w", pady=3)
+        tk.Label(body, text="自動終了は全画像の圧縮が成功したときに行います。", bg=PANEL, fg=MUTED,
+                 anchor="w", justify="left", wraplength=260, padx=0, pady=0).grid(
+            row=9, column=0, columnspan=2, sticky="w", pady=(4, 0),
+        )
+        ttk.Button(body, text="閉じる", command=self.advanced_window.withdraw).grid(row=10, column=1, sticky="e", pady=(10, 0))
         dark_native_caption(self.advanced_window)
 
     def _build_history_window(self):
@@ -483,6 +513,16 @@ class CompressorApp:
 
     def _overwrite_changed(self):
         self._refresh_controls()
+        self._save_settings()
+
+    def _apply_window_preferences(self):
+        for window in (self.root, getattr(self, "advanced_window", None), getattr(self, "history_window", None)):
+            if window is not None:
+                window.attributes("-topmost", self.always_on_top.get())
+
+    def _preferences_changed(self):
+        self._apply_window_preferences()
+        self._save_settings()
 
     def _selected_scale_percent(self) -> int:
         value = self.max_size.get()
@@ -719,6 +759,8 @@ class CompressorApp:
         self.history_button.configure(state="normal")
 
     def _finish(self, cancelled: bool):
+        # A cancellation can arrive after the worker queued its final event.
+        cancelled = cancelled or self.cancel_event.is_set()
         self.busy = False
         successes = len(self.results)
         failures = len(self.failures)
@@ -746,6 +788,13 @@ class CompressorApp:
                 self.toggle_history()
         self.drop_title.configure(text="ここに画像をドロップ" if self.dnd_available else "画像を選んで圧縮")
         self._refresh_controls()
+        if not cancelled and not self.closing and (successes or failures):
+            if self.completion_sound.get():
+                play_completion_sound(self.root)
+            if self.auto_close.get() and successes and not failures:
+                # The event poller closes only after this batch's final event,
+                # using the same settings/position saving path as manual close.
+                self.closing = True
 
     def cancel(self):
         if self.busy:
@@ -810,12 +859,16 @@ class CompressorApp:
             # quality 65 or a resize. Migrate those installs to safe defaults.
             self.preserve_image.set(data.get("preserve_image") is not False)
             self.overwrite_original.set(data.get("overwrite_original") is True)
+            self.completion_sound.set(data.get("completion_sound") is True)
+            self.auto_close.set(data.get("auto_close") is True)
+            self.always_on_top.set(data.get("always_on_top") is True)
             if data.get("folder_mode") in ("same", "custom"):
                 self.folder_mode.set(data["folder_mode"])
             if isinstance(data.get("folder"), str) and data["folder"]:
                 self.folder.set(data["folder"])
         except (OSError, ValueError, TypeError, KeyError):
             pass
+        self._apply_window_preferences()
 
     def _save_settings(self):
         try:
@@ -828,6 +881,9 @@ class CompressorApp:
             "metadata": self.keep_metadata.get(), "folder_mode": self.folder_mode.get(),
             "preserve_image": self.preserve_image.get(),
             "overwrite_original": self.overwrite_original.get(),
+            "completion_sound": self.completion_sound.get(),
+            "auto_close": self.auto_close.get(),
+            "always_on_top": self.always_on_top.get(),
             "folder": self.folder.get(),
             "window_position": self.window_position.to_settings(),
         }
